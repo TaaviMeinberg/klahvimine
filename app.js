@@ -1,4 +1,6 @@
 /* TYPER */
+var counter=0;
+var length=0;
 const TYPER = function () {
   if (TYPER.instance_) {
     return TYPER.instance_
@@ -14,9 +16,23 @@ const TYPER = function () {
   this.word = null
   this.wordMinLength = 5
   this.guessedWords = 0
-
+  this.generatedWordLength=0 
+  this.length = length
+  this.counter = counter
+  this.splitScore = 0
+  this.score = 0
+  
   this.init()
 }
+
+
+
+function init () {
+  scoreContainer = document.querySelector('score')
+  console.log(scoreContainer)
+}
+
+
 
 window.TYPER = TYPER
 
@@ -63,10 +79,24 @@ TYPER.prototype = {
     const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
     const wordFromArray = this.words[generatedWordLength][randomIndex]
-
     this.word = new Word(wordFromArray, this.canvas, this.ctx)
-  },
+	length = generatedWordLength
+	counter = this.guessedWords
+	const splitScore = generatedWordLength * this.guessedWords
+	console.log(splitScore)
+	this.score = this.score + splitScore
+	console.log(this.score)
+	
+	
+	document.getElementById("Words").innerHTML =
+	"Õigesti arvatud sõnu:  " + counter + ".";  
+	document.getElementById("wordLenght").innerHTML =
+	"Sõna pikkus:  " + length+ ".";
+	document.getElementById("streak").innerHTML =
+	"Skoor:  " + this.score + ".";  
 
+  },
+ 
   keyPressed: function (event) {
     const letter = String.fromCharCode(event.which)
 
@@ -76,6 +106,7 @@ TYPER.prototype = {
       if (this.word.left.length === 0) {
         this.guessedWords += 1
 
+		
         this.generateWord()
       }
 
@@ -83,6 +114,8 @@ TYPER.prototype = {
     }
   }
 }
+
+
 
 /* WORD */
 const Word = function (word, canvas, ctx) {
@@ -106,6 +139,10 @@ Word.prototype = {
   }
 }
 
+
+
+
+
 /* HELPERS */
 function structureArrayByWordLength (words) {
   let tempArray = []
@@ -115,6 +152,7 @@ function structureArrayByWordLength (words) {
     if (tempArray[wordLength] === undefined)tempArray[wordLength] = []
 
     tempArray[wordLength].push(words[i])
+
   }
 
   return tempArray
